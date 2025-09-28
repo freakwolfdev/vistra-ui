@@ -1,3 +1,5 @@
+import { Button } from './Button';
+
 const App = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
@@ -9,6 +11,16 @@ const App = () => {
           <p className="mb-8 text-gray-300 text-lg">
             A modern, fast development setup with the latest tools
           </p>
+
+          {/* Test Button Component */}
+          <div className="mb-8 flex flex-wrap justify-center gap-4">
+            <Button variant="primary" label="Primary Button" />
+            <Button variant="secondary" label="Secondary Button" />
+            <Button variant="outlined" label="Outlined Button" />
+            <Button variant="primary" size="large" label="Large Button" />
+            <Button variant="secondary" size="small" label="Small Button" />
+            <Button variant="primary" disabled label="Disabled Button" />
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/5 p-6">

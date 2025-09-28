@@ -1,108 +1,73 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { cx } from '../lib/helper';
+import type { ButtonProps } from './Button.types';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * The visual style variant of the button
-   */
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
-  /**
-   * The size of the button
-   */
-  size?: 'sm' | 'md' | 'lg';
-  /**
-   * Whether the button should take full width
-   */
-  fullWidth?: boolean;
-  /**
-   * Whether the button is in a loading state
-   */
-  loading?: boolean;
-  /**
-   * The content to display inside the button
-   */
-  children: React.ReactNode;
-}
+export type { ButtonProps } from './Button.types';
 
 /**
- * A versatile button component with multiple variants and sizes.
+ * Primary UI component for user interaction.
+ *
+ * A versatile button component that supports different sizes, variants, and states.
+ * Built with Tailwind CSS for consistent styling and responsive design.
+ * Supports all native HTML button attributes and can be forwarded a ref.
  *
  * @example
- * <Button variant="primary" size="md">Click me</Button>
- * <Button variant="outline" size="lg" fullWidth>Submit</Button>
- * <Button variant="destructive" loading>Deleting...</Button>
+ * ```tsx
+ * <Button variant="primary" size="large" label="Click me" onClick={handleClick} />
+ * <Button variant="secondary" size="small" label="Cancel" disabled />
+ * <Button variant="outlined" label="Learn More" />
+ * <Button ref={buttonRef} aria-label="Close dialog" />
+ * ```
  */
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       variant = 'primary',
-      size = 'md',
-      fullWidth = false,
-      loading = false,
-      disabled,
-      className,
-      children,
+      size = 'medium',
+      label,
+      className = '',
+      disabled = false,
+      type = 'button',
+      onClick,
       ...props
     },
     ref,
   ) => {
-    const baseStyles =
-      'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+    // Size-specific classes
+    const sizeClasses = {
+      small: 'px-3 py-1.5 text-sm',
+      medium: 'px-4 py-2 text-base',
+      large: 'px-6 py-3 text-lg',
+    };
 
-    const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800',
+    // Variant-specific classes
+    const variantClasses = {
+      primary:
+        'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 active:bg-blue-800',
       secondary:
-        'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300',
-      outline:
-        'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 active:bg-gray-100',
-      ghost:
-        'bg-transparent text-gray-700 hover:bg-gray-100 active:bg-gray-200',
-      destructive: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
-    };
+        'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500 active:bg-gray-300',
+      outlined:
+        'bg-transparent text-blue-600 border border-blue-600 hover:bg-blue-50 focus:ring-blue-500 active:bg-blue-100',
+    }[variant];
 
-    const sizes = {
-      sm: 'h-8 px-3 text-sm',
-      md: 'h-10 px-4 text-sm',
-      lg: 'h-12 px-6 text-base',
-    };
+    // Combine all classes using cx utility
+    const buttonClasses = cx(
+      'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+      sizeClasses[size],
+      variantClasses,
+      className,
+    );
 
     return (
       <button
         ref={ref}
-        className={cx(
-          baseStyles,
-          variants[variant],
-          sizes[size],
-          fullWidth && 'w-full',
-          className,
-        )}
-        disabled={disabled || loading}
+        type={type}
+        className={buttonClasses}
+        disabled={disabled}
+        onClick={onClick}
         {...props}
       >
-        {loading && (
-          <svg
-            className="mr-2 h-4 w-4 animate-spin"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-        )}
-        {children}
+        {label}
       </button>
     );
   },
